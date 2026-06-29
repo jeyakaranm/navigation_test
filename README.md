@@ -30,6 +30,9 @@ obstacle.
 > **Note:** All ROS 2 dependencies (Gazebo, TurtleBot3 packages, build tools) are
 > installed inside the Docker image. No host ROS installation is needed.
 
+
+> **Note:** Run all `make` commands from the repository root (the directory containing the Makefile).
+
 ### Docker image & display
 
 Do this once before any option. Pull the prebuilt image (or build it) and allow
