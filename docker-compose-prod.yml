@@ -1,0 +1,29 @@
+version: "3.3"
+
+services:
+  autonomy_prod:
+    container_name: autonomy_prod
+    image: jeyakaranm/autonomy_dev:humble
+    network_mode: "host"
+    privileged: true
+    ipc: host
+    stdin_open: true
+    tty: true
+    security_opt:
+      - seccomp:unconfined
+    cap_add:
+      - ALL
+    environment:
+      DISPLAY: $DISPLAY
+      RCUTILS_COLORIZED_OUTPUT: 1
+      QT_X11_NO_MITSHM: 1
+      QT_GRAPHICSSYSTEM: native
+      ROS_LOCALHOST_ONLY: 1
+      USE_SIM_TIME: True
+      TURTLEBOT3_MODEL: burger
+      GAZEBO_MODEL_PATH: /opt/ros/humble/share/turtlebot3_gazebo/models
+      ROS_DOMAIN_ID: 0
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+      - $HOME/.Xauthority:/root/.Xauthority
+      - /dev/shm:/dev/shm

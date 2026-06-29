@@ -1,0 +1,80 @@
+# Parameters for the LiDAR-based docking controller.
+# Geometry: dock face wall at x = 3.0, side wall at y = 0.0, corner at (3.0, 0.0).
+# Robot operates in the +x/+y quadrant facing +x toward the dock face.
+docking_node:
+  ros__parameters:
+
+    scan_topic: "/scan"
+    odom_topic: "/odom"
+    cmd_vel_topic: "/cmd_vel"
+    base_frame: "base_footprint"
+
+    # FOV & wall classification Params
+
+    forward_arc: 1.9199          # half-arc of forward points considered (110 deg)
+    face_normal_max: 0.9599      # |normal angle| <= this -> dock face (55 deg)
+    side_normal_center: -1.5708  # expected side-wall normal direction (-90 deg)
+    side_normal_tol: 0.7854      # tolerance around the side-wall normal (45 deg)
+
+    # RANSAC line fit Params
+    ransac_iterations: 120
+    ransac_inlier_threshold: 0.02
+    ransac_min_inliers: 12
+    ransac_max_rms_residual: 0.03
+
+    # Fit-quality & outlier gating Params
+    good_fit_min_inliers: 15        # face fit must keep >= this many inliers to be trusted
+    good_fit_max_residual: 0.025    # face fit RMS residual above this -> bad fit -> stop
+    wall_reject_band: 0.07          # reject points within this band of a fitted wall
+    estimate_jump_threshold: 0.30   # reject pose estimates that jump more than this (dist_face)
+
+    # DOCK GOAL - desired relative dock pose & success tolerances
+    longitudinal_offset: 0.45
+    lateral_offset: 0.50
+    predock_pose_offset_longitudinal: 1.0   # stage-1 line-up distance from the dock face
+    xy_tolerance: 0.03
+    yaw_tolerance: 0.02
+
+    # SEARCH - search for the dock face when no valid fit is available
+    search_omega: 0.25              # angular rate (rad/s) while searching for the dock
+    search_sweep_cycles: 40         # control cycles per half of the left-right sweep
+
+    # Controller gains - Astolfi
+    k_range: 0.6                    # distance gain; shared: also scales lane-follow forward speed
+    k_alpha: 1.3                    # steer toward the goal-point bearing
+    k_beta: -0.45                   # regulate the final docking heading
+    k_yaw: 1.2                      # heading-error steering gain
+    k_cross: 0.8                    # cross-track (lateral) steering gain
+    linear_vel_max_align: 0.06      # forward speed cap during the in-place FINAL_APPROACH stage
+    angular_vel_trim_max: 0.25      # steering cap during the straight-in stage
+    linear_vel_max_approach: 0.18   # forward speed cap during the approach stage
+    predock_ready_cycles: 5         # cycles of good line-up before straight-in
+
+    # FALLBACK Params - if the robot fails to make progress, fall back to predock
+    predock_progress_timeout: 6.0   # no forward progress -> fall back to PREDOCK
+    relineup_lateral: 0.06          # lateral drift that forces a pre-dock re-line-up
+    relineup_yaw: 0.12              # yaw drift that forces a pre-dock re-line-up
+
+    # Final Yaw Alignment Params - if the robot is close to the goal but misaligned
+    min_align_omega: 0.15    # |w| for a pulsed in-place yaw nudge near the goal
+    align_kick_period: 4     # coast cycles between pulsed yaw nudges (anti-hunt)
+
+    # Velocity & acceleration limits
+    angular_vel_max: 0.8     # global turn-rate cap
+    max_lin_accel: 0.4       # linear slew-rate limit
+    max_ang_accel: 1.5       # angular slew-rate limit
+    error_ema_alpha: 0.4     # EMA low-pass on measured errors
+
+    # Criteria for state transitions and docking success
+    valid_cycles_to_engage: 5       # good estimates required before engaging
+    success_cycles: 8               # consecutive in-tolerance cycles to latch DOCKED
+    hold_timeout: 8.0               # max time held in HOLD before aborting
+    max_refit_attempts: 3           # pre-PREDOCK aborts that re-acquire instead of giving up
+
+    # Obstacle Stopping Params
+    corridor_half_width: 0.18
+    obstacle_margin: 0.15
+    obstacle_stop_distance: 0.30
+
+    control_rate_hz: 20.0
+    auto_start: false

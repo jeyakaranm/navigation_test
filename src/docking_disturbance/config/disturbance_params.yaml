@@ -1,0 +1,56 @@
+# Disturbance injector parameters.
+# Disturbances are gated on the controller's docking stage (read from
+# /docking/status) so each is exercised during the docking phase and nothing
+# keeps firing after the robot has docked. The moving obstacle blocks the
+# corridor once, waits for the robot to stop, then clears so it can recover.
+disturbance_node:
+  ros__parameters:
+    scan_in: "/scan"
+    scan_out: "/scan_dock"
+    odom_in: "/odom"
+    odom_out: "/odom_dock"
+    status_topic: "/docking/status"
+
+    enable_scan_dropout: true
+    enable_scan_corruption: true
+    enable_pose_noise: true
+    enable_moving_obstacle: true
+
+    # Stage at which each disturbance fires (SEARCH | APPROACH_PREDOCK | PREDOCK | FINAL_APPROACH).
+    # During APPROACH_PREDOCK the corruption burst hits first (with pose noise), then the
+    # scan dropout fires after it (dropout_delay), so both happen before the
+    # robot reaches the predock standoff; the obstacle stops it between PREDOCK
+    # and DOCK.
+    dropout_stage: "APPROACH_PREDOCK"
+    corruption_stage: "APPROACH_PREDOCK"
+    pose_noise_stage: "APPROACH_PREDOCK"
+    obstacle_stage: "PREDOCK"
+
+    # Scan dropout burst (drops publication -> controller freshness gate trips).
+    # Delayed by dropout_delay after entering APPROACH_PREDOCK so it follows the
+    # corruption burst (2.0s) instead of overlapping it. Both bursts fit inside
+    # APPROACH_PREDOCK so neither leaks into PREDOCK/FINAL_APPROACH.
+    dropout_duration: 3.0
+    dropout_delay: 2.0
+
+    # Scan corruption burst (blanks the forward sector to +inf)
+    corruption_duration: 2.0
+    corruption_sector_width_deg: 40.0
+
+    # Pose noise (Gaussian) injected onto the republished odometry
+    pose_noise_xy_stddev: 0.08
+    pose_noise_yaw_stddev: 0.05
+
+    # Moving obstacle driven via set_entity_state. Parked off the path, then
+    # moved into the corridor once during its stage, held until the robot has
+    # been stopped (HOLD) for obstacle_clear_after_hold seconds, then cleared.
+    obstacle_name: "moving_obstacle"
+    obstacle_block_x: 2.45          # blocking position (world frame), just ahead of the predock standoff
+    obstacle_block_y: 0.5
+    obstacle_park_x: 2.2            # parked position, off the approach path
+    obstacle_park_y: 1.5
+    obstacle_block_delay: 0.3       # wait after entering the stage before blocking
+    obstacle_clear_after_hold: 4.0  # keep blocking this long after the robot stops, then clear
+    obstacle_block_max: 10.0        # safety: clear even if the robot never stops
+    obstacle_repeat: false          # if true, re-arm and block again after clearing (continuous)
+    set_state_service: "/dock/set_entity_state"

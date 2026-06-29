@@ -1,0 +1,33 @@
+{
+    "name": "autonomy_dev",
+    "dockerComposeFile": "../docker-compose.yml",
+    "service": "autonomy_dev",
+    "workspaceFolder": "/root/src/autonomy_dev",
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "ms-vscode.cpptools",
+                "ms-vscode.cmake-tools",
+                "ms-python.python",
+                "mhutchie.git-graph",
+                "xaver.clang-format",
+                "visualstudioexptteam.vscodeintellicode",
+                "donjayamanne.githistory",
+                "ms-azuretools.vscode-docker",
+                "ms-vscode.vs-keybindings",
+                "mde.select-highlight-minimap",
+                "grimmer.vscode-back-forward-button",
+                "nick-rudenko.back-n-forth",
+                "ranch-hand-robotics.rde-pack",
+                "redhat.vscode-yaml",
+                "smilerobotics.urdf",
+                "yzhang.markdown-all-in-one",
+                "ms-vscode.cpptools-extension-pack",
+                "ms-python.black-formatter",
+                "ms-python.isort",
+                "visualstudioexptteam.intellicode-api-usage-examples",
+                "cschlosser.doxdocgen"
+            ]
+        }
+    }
+}

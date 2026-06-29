@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://relaxng.org/ns/structure/1.0"?>
+<package format="3">
+  <name>docking_bringup</name>
+  <version>0.1.0</version>
+  <description>End-to-end bringup, metrics and evaluation for the docking demo.</description>
+  <maintainer email="dev@example.com">autonomy_dev</maintainer>
+  <license>TODO: License declaration</license>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+
+  <exec_depend>docking_sim</exec_depend>
+  <exec_depend>docking_controller</exec_depend>
+  <exec_depend>docking_disturbance</exec_depend>
+  <exec_depend>rclpy</exec_depend>
+  <exec_depend>gazebo_msgs</exec_depend>
+  <exec_depend>std_msgs</exec_depend>
+  <exec_depend>std_srvs</exec_depend>
+  <exec_depend>rviz2</exec_depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>
