@@ -149,3 +149,42 @@ The final dock pose is defined relative to the detected dock corner in
 Adjust these to retarget the dock/predock poses without code changes.
 
 
+
+## Results
+
+The demos below show docking under baseline conditions and under the two
+disturbance scenarios. RViz legend:
+
+- **Magenta arrow** — final dock pose.
+- **Yellow arrow** — pre-dock line-up pose.
+- **Yellow scan** — the raw LiDAR scan.
+- **Red scan** — the disturbed scan (`/scan_dock`) consumed by the controller in cases 1 and 2.
+
+### Baseline — no disturbances
+
+Clean run with an undisturbed scan; the robot lines up at the pre-dock pose and
+pushes straight in.
+
+https://github.com/user-attachments/assets/ba0fe443-3402-429e-9698-1f20c0be57b3
+
+### Case 1 — corrupt scan + pose noise + moving obstacle
+
+The forward sector of the dock scan is blanked out; the controller detects the
+weak fit and holds until the scan recovers, then completes the dock.
+
+https://github.com/user-attachments/assets/d1160bf3-0c02-45d1-a1fa-669ee5fbdf78
+
+<img width="1723" height="963" alt="Corrupt scan triggers HOLD" src="https://github.com/user-attachments/assets/8a4dd4ec-b491-452f-8bab-2110cd9f8d45" />
+
+*Frame captured from the video: the status log shows the robot in HOLD while the dock scan is corrupted.*
+
+### Case 2 — stale scan + pose noise + moving obstacle
+
+The dock scan freezes (goes stale); only the raw yellow scan stays live. The
+freshness gate trips and the robot holds, then resumes once the scan updates.
+
+https://github.com/user-attachments/assets/e8703f77-d32e-4f2c-b5b1-38d7e9270a9f
+
+<img width="1723" height="963" alt="Stale dock scan triggers HOLD" src="https://github.com/user-attachments/assets/2495940e-22b2-48b7-940a-d7f9cf498dd2" />
+
+*Only the yellow scan remains; the red dock scan (used by the controller) has gone stale, and the log confirms the robot is in HOLD.*
