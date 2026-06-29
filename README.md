@@ -190,3 +190,18 @@ https://github.com/user-attachments/assets/e8703f77-d32e-4f2c-b5b1-38d7e9270a9f
 <img width="1723" height="963" alt="Stale dock scan triggers HOLD" src="https://github.com/user-attachments/assets/2495940e-22b2-48b7-940a-d7f9cf498dd2" />
 
 *Only the yellow scan remains; the red dock scan (used by the controller) has gone stale, and the log confirms the robot is in HOLD.*
+
+### Sample Result Summary 
+
+Ground-truth final pose error (TurtleBot3 Burger, Gazebo), robot spawned with a
+lateral and yaw offset so all three DOF are corrected during docking.
+
+| Scenario | Position error | Yaw error | Outcome |
+|---|---|---|---|
+| Baseline (no disturbances) | ≈ 9 mm | ≈ 0.05° | DOCKED |
+| Case 1 — scan corruption + pose noise + obstacle | ≈ 25 mm | ≈ 0.1° | DOCKED (HOLD/recover) |
+| Case 2 — scan dropout + pose noise + obstacle | ≈ 25 mm | ≈ 0.1° | DOCKED (HOLD/recover) |
+
+From an aligned start the dock converges to ≈ 11 mm / ≈ 0.01°. Under disturbances
+the controller enters HOLD, then resumes and converges. The moving obstacle triggers
+a safe stop with automatic retry.
